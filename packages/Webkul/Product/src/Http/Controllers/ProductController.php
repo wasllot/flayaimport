@@ -207,7 +207,13 @@ class ProductController extends Controller
      */
     public function downloadTemplate($id)
     {
-        return redirect()->route($this->_config['redirect']);
+        $product = $this->productRepository->with(['variants', 'variants.inventories'])->findOrFail($id);
+
+        $categories = $this->categoryRepository->getCategoryTree();
+
+        $inventorySources = $this->inventorySourceRepository->findWhere(['status' => 1]);
+
+        return view($this->_config['view'], compact('product', 'categories', 'inventorySources'));
     }
     
     /**
